@@ -1,10 +1,18 @@
 import uvicorn
 
+from enum import Enum
+
 from fastapi import FastAPI
 from typing import Optional
 
 
 app = FastAPI()
+
+
+class EducationLevel(str, Enum):
+    SECONDARY = 'Среднее образование'
+    SPECIAL = 'Среднее специальное образование'
+    HIGHER = 'Высшее образование'
 
 
 @app.get('/me')
@@ -14,31 +22,27 @@ def hello_author():
 
 @app.get('/{name}')
 def greetings(
-        name: str,
-        surname: str,
-        age: Optional[int] = None,
-        is_staff: bool = False
+    *,
+    surname: str,
+    age: Optional[int] = None,
+    is_staff: bool = False,
+    education_level: Optional[EducationLevel] = None,
+    name: str,
 ) -> dict[str, str]:
     result = ' '.join([name, surname])
     result = result.title()
     if age is not None:
         result += ', ' + str(age)
+    if education_level is not None:
+        result += ', ' + education_level.lower()
     if is_staff:
         result += ', сотрудник'
     return {'Hello': result}
 
 
-@app.get('/multiplication')
-def multiplication(
-    length: int,
-    width: int,
-    depth: Optional[int] = None
-) -> int:
-    result = length * width
-    if depth is not None:
-        result *= depth
-    return result
-
-
 if __name__ == '__main__':
-    uvicorn.run('main:app', reload=True)
+
+    try:
+        uvicorn.run('main:app', reload=True)
+    except KeyboardInterrupt:
+        pass
