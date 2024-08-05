@@ -1,17 +1,15 @@
-import uvicorn
+from fastapi import APIRouter, Body
 
-from fastapi import Body, FastAPI
+from app.schemas.schemas import Person
 
-from schemas import Person
-
-
-app = FastAPI()
+router = APIRouter()
 
 
-@app.post('/hello')
+@router.post('/hello')
 def greetings(
         person: Person = Body(
-            ..., openapi_examples=Person.Config.schema_extra['examples']
+            ...,
+            openapi_examples=Person.Config.schema_extra['examples']
         )
 ) -> dict[str, str]:
     if isinstance(person.surname, list):
@@ -27,11 +25,3 @@ def greetings(
     if person.is_staff:
         result += ', сотрудник'
     return {'Hello': result}
-
-
-if __name__ == '__main__':
-
-    try:
-        uvicorn.run('main:app', reload=True)
-    except KeyboardInterrupt:
-        pass
