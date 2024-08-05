@@ -1,26 +1,11 @@
 import uvicorn
 
-from enum import Enum
-from typing import Optional, Union
-
 from fastapi import FastAPI
-from pydantic import BaseModel
+
+from schemas import Person
+
 
 app = FastAPI()
-
-
-class EducationLevel(str, Enum):
-    SECONDARY = 'Среднее образование'
-    SPECIAL = 'Среднее специальное образование'
-    HIGHER = 'Высшее образование'
-
-
-class Person(BaseModel):
-    name: str
-    surname: Union[str, list[str]]
-    age: Optional[int]
-    is_staff: bool = False
-    education_level: Optional[EducationLevel]
 
 
 @app.post('/hello')
